@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Rediont/BackEnd#readme",
+  "bugs": {
+    "url": "https://github.com/Rediont/BackEnd/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rediont/BackEnd.git"
+  },
+  "license": "ISC",
+  "author": "Mykhailo Vuilov",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start-local": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongodb": "^6.13.0",
+    "mongoose": "^8.10.0",
+    "mongoose-sequence": "^6.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
