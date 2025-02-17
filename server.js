@@ -1,7 +1,9 @@
 const express = require('express');
+const mongoose = require('mongoose')
 const clientsRouter = require('./routes/clients');
-const loginRouter = require('./routes/login')
-const contractsRouter = require('./routes/contracts')
+const loginRouter = require('./routes/login');
+const contractsRouter = require('./routes/contracts');
+const connectDb = require('./database')
 
 const app = express();
 
@@ -13,9 +15,10 @@ app.use('/login', loginRouter)
 app.use('/contracts', contractsRouter)
 
 app.get('/', (req,res) => {
+    connectDb();
     res.send("Connected!");
 })
 
 app.listen(PORT,() => {
-    
+    console.log(`server running on port: ${PORT}`)
 })
