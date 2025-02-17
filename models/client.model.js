@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const AutoIncrement =  require('mongoose-sequence')(mongoose);
 
 const clientSchema = new mongoose.Schema({
     id: {
@@ -38,8 +37,6 @@ const clientSchema = new mongoose.Schema({
         unique: false
     }
 })
-
-clientSchema.plugin(AutoIncrement,{inc_field: 'id'});
 
 const Client = mongoose.model('Client', clientSchema);
 module.exports = Client;

@@ -3,15 +3,19 @@ const Client = require('../models/client.model');
 
 const router = express.Router();
 
-router.get('/', (req,res) => {
-
-
-
+router.get('/', async (req,res) => {
+    try {
+        const clients = await Client.find({});
+        res.json(clients);
+    }
+    catch {
+        res.status(404);
+    }
 })
 
 router.get('/:id', async (req,res) => {
     try {
-        const client = Client.findOne({id: req.params.id});
+        const client = await Client.findOne({id: req.params.id});
         res.json(client);
     }   
     catch {
@@ -19,7 +23,7 @@ router.get('/:id', async (req,res) => {
     }
 })
 
-router.post('/create', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const newId = await Client.countDocuments() + 1;
 
@@ -30,7 +34,7 @@ router.post('/create', async (req, res) => {
             phoneNumber: req.body.phone,
             address: req.body.address
         })
-
+        await newClient.save();
         res.send('created');
     }
     catch {
@@ -40,32 +44,22 @@ router.post('/create', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        switch (true) {
-            case req.query.name: {
-                await Client.findOneAndUpdate({id: req.params.id},
-                    { $set: {name: req.query.name} }
-                )
-            }
-            case req.query.surname: {
-                await Client.findOneAndUpdate({id: req.params.id},
-                    { $set: {surname: req.query.surname} }
-                )
-            }
-            case req.query.phone: {
-                await Client.findOneAndUpdate({id: req.params.id},
-                    { $set: {phoneNumber: req.query.phone} }
-                )
-            }
-            case req.query.address: {
-                await Client.findOneAndUpdate({id: req.params.id},
-                    { $set: {name: req.query.address} }
-                )
-            }
+        const updateFields = {};
+
+        if (req.query.name) updateFields.name = req.query.name;
+        if (req.query.surname) updateFields.surname = req.query.surname;
+        if (req.query.phone) updateFields.phoneNumber = req.query.phone;
+        if (req.query.address) updateFields.address = req.query.address;
+
+        if (Object.keys(updateFields).length === 0) {
+            return res.status(400).send("No fields to update.");
         }
-        res.send('client updated');
-    }
-    catch {
-        res.status(500);   
+
+        await Client.findOneAndUpdate({ id: req.params.id }, { $set: updateFields });
+
+        res.send("Client updated successfully.");
+    } catch (error) {
+        res.status(500).send("Server error.");
     }
 })
 

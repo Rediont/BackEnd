@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const AutoIncrement =  require('mongoose-sequence')(mongoose);
 
 const employeeSchema = new mongoose.Schema({
     id: {
@@ -48,8 +47,6 @@ const employeeSchema = new mongoose.Schema({
         ref: 'Contract'
     }]
 })
-
-employeeSchema.plugin(AutoIncrement,{inc_field: 'id'});
 
 const Employee =  mongoose.model('Employee', employeeSchema);
 module.exports = Employee;

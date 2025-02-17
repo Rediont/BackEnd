@@ -37,10 +37,6 @@ router.get('/:id', async (req,res) => {
  router.post('/create', async (req,res) => {
     try {
 
-        // if(Client.find({id: req.body.clientId})){
-
-        // }
-
         const id = await Contract.countDocuments() + 1;
         const newContract = Contract({
             id: id,

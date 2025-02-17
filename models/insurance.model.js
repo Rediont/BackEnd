@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const AutoIncrement =  require('mongoose-sequence')(mongoose);
 
 const insuranceTypeSchema = new mongoose.Schema({
     id: {
@@ -27,8 +26,6 @@ const insuranceTypeSchema = new mongoose.Schema({
         max: 1
     }
 })
-
-insuranceTypeSchema.plugin(AutoIncrement,{inc_field: 'id'});
 
 const Insurance = mongoose.model('Insurance', insuranceTypeSchema);
 module.exports = Insurance;
