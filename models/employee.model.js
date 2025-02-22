@@ -39,13 +39,9 @@ const employeeSchema = new mongoose.Schema({
         maxlength: 40
     },
     branch: {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'CompanyBranch'
-    },
-    contracts: [{
-        type: Number,
-        ref: 'Contract'
-    }]
+    }
 })
 
 const Employee =  mongoose.model('Employee', employeeSchema);

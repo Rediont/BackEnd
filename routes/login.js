@@ -5,10 +5,10 @@ const router = express.Router();
 
 router.get('/', async (req,res) => {
     try {
-        const user = await User.find({username: req.body.username, password: req.body.password}).lean();
+        const user = await User.findOne({username: req.query.username, password: req.query.password});
         if(user){
             res.json({
-                id: user.employyeId,
+                id: user.employeeId,
                 privileges: user.privileges
             });
         }

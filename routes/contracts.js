@@ -1,7 +1,10 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const Branch = require('../models/branch.model')
 const Contract = require('../models/contract.model');
 const Client = require('../models/client.model');
+const Employee = require('../models/employee.model');
+const Insurance = require('../models/insurance.model');
+const { model } = require('mongoose');
 
 
 const router = express.Router();
@@ -13,13 +16,25 @@ router.get('/show/:pageid', async (req,res) => {
         let page = Number(req.params.pageid);
         let skip = (page-1) * limit;
 
-        const contracts = await Contract.find().skip(skip).limit(limit).populate('client').populate('employee');
+        const contracts = await Contract.find().skip(skip)
+            .limit(limit)
+            .populate('client')
+            .populate({
+                path: 'employee',
+                populate: {
+                    path: 'branch',
+                    model: 'Branch'
+                }
+            })
+            .populate('insuranceType')
+            .lean();
 
         console.log(contracts);
         res.json(contracts);
     }
-    catch {
-        res.status(500);
+    catch(error) {
+        console.error("Error fetching contracts:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 })
 
@@ -36,13 +51,45 @@ router.get('/:id', async (req,res) => {
 
  router.post('/create', async (req,res) => {
     try {
+        const client = await Client.findOne({
+            name: req.body.clientName,
+            surname: req.body.clientSurname,
+            address: req.body.clientAddress
+        });
+
+        const targetEmployee = await Employee.findOne({
+            id: req.body.employeeId
+        });
+
+        const insuranceType = await Insurance.findOne({
+            id: req.body.insuranceTypeId
+        });
+
+        employeeObjectId = targetEmployee._id;
+        insuranceObjectId = insuranceType._id;
+
+        if(client === null) {
+            const clientiId = await Client.countDocuments() + 1;
+            const newClient = Client({
+                id: clientiId,
+                name: req.body.clientName,
+                surname: req.body.clientSurname,
+                phoneNumber: req.body.clientPhone,
+                address: req.body.clientAddress
+            });
+            clientObjectId = newClient._id;
+            await newClient.save();
+        }
+        else {
+            clientObjectId = client._id;
+        }
 
         const id = await Contract.countDocuments() + 1;
         const newContract = Contract({
             id: id,
-            employye: req.body.employeeId,
-            client: req.body.clientId,
-            insuranceType: req.body.insuranceTypeId,
+            employee: employeeObjectId,
+            client: clientObjectId,
+            insuranceType: insuranceObjectId,
             insuranceAmount: req.body.insuranceAmount,
             date: new Date(),
             duration: req.body.duration
@@ -52,8 +99,9 @@ router.get('/:id', async (req,res) => {
         res.status(201)
         res.send(`created ${id}`);
     }
-    catch{
-        res.status(500)
+    catch(error) {
+        console.error("Error fetching contracts:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 })
 

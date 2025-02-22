@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const companyBranchSchema = new mongoose.Schema({
+const branchSchema = new mongoose.Schema({
     id: {
         type: Number,
         required: true,
@@ -20,11 +20,7 @@ const companyBranchSchema = new mongoose.Schema({
         minlength: 10,
         maxlength: 30
     },
-    employees: [{
-        type: Number,
-        ref: 'Emloyee'
-    }]
 })
 
-const Branch = mongoose.model('Branch', companyBranchSchema);
+const Branch = mongoose.model('Branch', branchSchema);
 module.exports = Branch;

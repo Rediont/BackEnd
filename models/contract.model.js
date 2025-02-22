@@ -6,16 +6,16 @@ const contractSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    emloyee: {
-        type: Number,
+    employee: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee'
     },
     client: {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Client'
     },
     insuranceType: {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Insurance'
     },
     insuranceAmount: {
