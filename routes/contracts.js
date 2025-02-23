@@ -28,8 +28,33 @@ router.get('/show/:pageid', async (req,res) => {
             })
             .populate('insuranceType')
             .lean();
+        res.json(contracts);
+    }
+    catch(error) {
+        console.error("Error fetching contracts:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+})
 
-        console.log(contracts);
+router.get('/show/employee/:pageid', async (req,res) => {
+    try {
+        let limit = 5;
+        let page = Number(req.params.pageid);
+        let skip = (page-1) * limit;
+
+        const contracts = await Contract.find({employee: req.query.employeeId}).skip(skip)
+            .limit(limit)
+            .populate('client')
+            .populate({
+                path: 'employee',
+                populate: {
+                    path: 'branch',
+                    model: 'Branch'
+                }
+            })
+            .populate('insuranceType')
+            .lean();
+
         res.json(contracts);
     }
     catch(error) {
@@ -49,8 +74,11 @@ router.get('/:id', async (req,res) => {
     }
 })
 
- router.post('/create', async (req,res) => {
+router.post('/create', async (req,res) => {
     try {
+
+        console.log(req.body)
+
         const client = await Client.findOne({
             name: req.body.clientName,
             surname: req.body.clientSurname,
@@ -67,6 +95,7 @@ router.get('/:id', async (req,res) => {
 
         employeeObjectId = targetEmployee._id;
         insuranceObjectId = insuranceType._id;
+        let clientObjectId;
 
         if(client === null) {
             const clientiId = await Client.countDocuments() + 1;

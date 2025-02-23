@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
     },
     employeeId: {
         type: Number,
-        ref: 'Employee'
+        ref: 'Employee',
+        unique: true
     }
 });
 
