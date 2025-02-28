@@ -1,27 +1,31 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Employee = require('../models/employee.model')
+const Branch = require('../models/branch.model')
 
 const router = express.Router();
 router.use(express.json());
 
-router.get('/', async (req, res) => {
+router.get('/:pageid', async (req, res) => {
     try {
-        const employees = await Employee.find();
+        let limit = 8;
+        let page = Number(req.params.pageid);
+        let skip = (page-1) * limit;
+
+        const employees = await Employee.find()
+            .skip(skip)
+            .limit(limit)
+            .populate({
+                path: 'branch',
+                model: 'Branch' 
+            })
+            .lean();
+        
         res.json(employees);
     }
-    catch {
-        res.status(404);
-    }
-})
-
-router.get('/:id', async (req, res) => {
-    try {
-        const employee = await Employee.findOne({ id: req.params.id});
-        res.json(employee);
-    }
-    catch {
-        res.status(404);
+    catch(error) {
+        console.error("Error fetching contracts:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 })
 

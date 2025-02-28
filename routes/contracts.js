@@ -12,7 +12,7 @@ router.use(express.json());
 
 router.get('/show/:pageid', async (req,res) => {
     try {
-        let limit = 5;
+        let limit = 8;
         let page = Number(req.params.pageid);
         let skip = (page-1) * limit;
 
@@ -38,11 +38,11 @@ router.get('/show/:pageid', async (req,res) => {
 
 router.get('/show/employee/:pageid', async (req,res) => {
     try {
-        let limit = 5;
+        let limit = 8;
         let page = Number(req.params.pageid);
         let skip = (page-1) * limit;
 
-        const contracts = await Contract.find({employee: req.query.employeeId}).skip(skip)
+        const contracts = await Contract.find({employee: employee._id}).skip(skip)
             .limit(limit)
             .populate('client')
             .populate({
@@ -78,7 +78,7 @@ router.post('/create', async (req,res) => {
     try {
 
         console.log(req.body)
-
+        
         const client = await Client.findOne({
             name: req.body.clientName,
             surname: req.body.clientSurname,
